@@ -199,23 +199,33 @@ def final_model(input_dim, filters, kernel_size, conv_stride,
     bn_cnn = BatchNormalization(name='bn_conv_1d')(conv_1d)
     # New - add a dropout - 20%
     dropout_layer = Dropout(0.2)(bn_cnn)
+    
+    # Removed maxpooling
     # New - add a maxpooling1D
-    maxpool1 = MaxPooling1D(pool_size = 2)(dropout_layer)
+    # maxpool1 = MaxPooling1D(pool_size = 2)(dropout_layer)
+    
     # Add a recurrent layer
     gru_layer = GRU(units, activation='relu',
-        return_sequences=True, implementation=2, name='rnn')(maxpool1)
+        return_sequences=True, implementation=2, name='rnn')(dropout_layer)
     # TODO: Add batch normalization
     bn_rnn = BatchNormalization()(gru_layer)
+    # Adding two more recurrent layers
+    gru_layer2 = GRU(units, activation='relu',
+        return_sequences=True, implementation=2, name='rnn2')(bn_rnn)
+    bn_rnn2 = BatchNormalization()(gru_layer2)
+    gru_layer3 = GRU(units, activation='relu',
+        return_sequences=True, implementation=2, name='rnn3')(bn_rnn2)
+    bn_rnn3 = BatchNormalization()(gru_layer3)
     # TODO: Add a TimeDistributed(Dense(output_dim)) layer
-    time_dense = TimeDistributed(Dense(output_dim))(bn_rnn)
+    time_dense = TimeDistributed(Dense(output_dim))(bn_rnn3)
     # TODO: Add softmax activation layer
     y_pred = Activation('softmax', name='softmax')(time_dense)
     # Specify the model
     model = Model(inputs=input_data, outputs=y_pred)
     # TODO: Specify model.output_length
     # recall pool size was 2.
-    model.output_length = lambda x: cnn_output_length_pooling(
-        x, kernel_size, conv_border_mode, conv_stride, 2)
+    model.output_length = lambda x: cnn_output_length(
+        x, kernel_size, conv_border_mode, conv_stride)
     print(model.summary())
        
     return model

@@ -13582,7 +13582,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#####################################################################</span>
@@ -14625,11 +14625,12 @@ My interpretation is that knowing how CNN is widely used in computer vision, it'
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># specify the model - building on top of model_3</span>
-<span class="n">model_end</span> <span class="o">=</span> <span class="n">final_model</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">161</span><span class="p">,</span> <span class="c1"># change to 13 if you would like to use MFCC features</span>
+<span class="c1"># update 2 - using MFCC features, added more recurrent layers, and removed maxpooling</span>
+<span class="n">model_end</span> <span class="o">=</span> <span class="n">final_model</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="c1"># change to 13 if you would like to use MFCC features</span>
                         <span class="n">filters</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                         <span class="n">kernel_size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> 
                         <span class="n">conv_stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -14654,27 +14655,33 @@ My interpretation is that knowing how CNN is widely used in computer vision, it'
 <pre>_________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
-the_input (InputLayer)       (None, None, 161)         0         
+the_input (InputLayer)       (None, None, 13)          0         
 _________________________________________________________________
-conv1d (Conv1D)              (None, None, 200)         354400    
+conv1d (Conv1D)              (None, None, 200)         28800     
 _________________________________________________________________
 bn_conv_1d (BatchNormalizati (None, None, 200)         800       
 _________________________________________________________________
 dropout_1 (Dropout)          (None, None, 200)         0         
 _________________________________________________________________
-max_pooling1d_1 (MaxPooling1 (None, None, 200)         0         
-_________________________________________________________________
 rnn (GRU)                    (None, None, 200)         240600    
 _________________________________________________________________
 batch_normalization_1 (Batch (None, None, 200)         800       
+_________________________________________________________________
+rnn2 (GRU)                   (None, None, 200)         240600    
+_________________________________________________________________
+batch_normalization_2 (Batch (None, None, 200)         800       
+_________________________________________________________________
+rnn3 (GRU)                   (None, None, 200)         240600    
+_________________________________________________________________
+batch_normalization_3 (Batch (None, None, 200)         800       
 _________________________________________________________________
 time_distributed_1 (TimeDist (None, None, 29)          5829      
 _________________________________________________________________
 softmax (Activation)         (None, None, 29)          0         
 =================================================================
-Total params: 602,429
-Trainable params: 601,629
-Non-trainable params: 800
+Total params: 759,629
+Trainable params: 758,029
+Non-trainable params: 1,600
 _________________________________________________________________
 None
 </pre>
@@ -14695,13 +14702,13 @@ None
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_model</span><span class="p">(</span><span class="n">input_to_softmax</span><span class="o">=</span><span class="n">model_end</span><span class="p">,</span> 
             <span class="n">pickle_path</span><span class="o">=</span><span class="s1">&#39;model_end.pickle&#39;</span><span class="p">,</span> 
             <span class="n">save_model_path</span><span class="o">=</span><span class="s1">&#39;model_end.h5&#39;</span><span class="p">,</span> 
-            <span class="n">spectrogram</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># change to False if you would like to use MFCC features</span>
+            <span class="n">spectrogram</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># change to False if you would like to use MFCC features</span>
 </pre></div>
 
     </div>
@@ -14719,45 +14726,45 @@ None
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Epoch 1/20
-101/101 [==============================] - 75s 739ms/step - loss: 222.0901 - val_loss: 231.6592
+101/101 [==============================] - 332s 3s/step - loss: 241.4243 - val_loss: 220.6491
 Epoch 2/20
-101/101 [==============================] - 65s 645ms/step - loss: 192.0065 - val_loss: 181.6423
+101/101 [==============================] - 317s 3s/step - loss: 180.9396 - val_loss: 172.3997
 Epoch 3/20
-101/101 [==============================] - 65s 643ms/step - loss: 177.2406 - val_loss: 170.0981
+101/101 [==============================] - 313s 3s/step - loss: 147.8327 - val_loss: 142.9315
 Epoch 4/20
-101/101 [==============================] - 64s 639ms/step - loss: 168.1865 - val_loss: 163.0125
+101/101 [==============================] - 314s 3s/step - loss: 132.8492 - val_loss: 132.7025
 Epoch 5/20
-101/101 [==============================] - 65s 639ms/step - loss: 161.1056 - val_loss: 161.2946
+101/101 [==============================] - 317s 3s/step - loss: 122.6694 - val_loss: 128.7634
 Epoch 6/20
-101/101 [==============================] - 65s 643ms/step - loss: 155.0364 - val_loss: 156.9736
+101/101 [==============================] - 316s 3s/step - loss: 115.0835 - val_loss: 124.5221
 Epoch 7/20
-101/101 [==============================] - 65s 643ms/step - loss: 150.2703 - val_loss: 158.2343
+101/101 [==============================] - 314s 3s/step - loss: 108.8121 - val_loss: 124.6688
 Epoch 8/20
-101/101 [==============================] - 65s 641ms/step - loss: 145.8628 - val_loss: 153.7110
+101/101 [==============================] - 316s 3s/step - loss: 103.2437 - val_loss: 117.6064
 Epoch 9/20
-101/101 [==============================] - 65s 640ms/step - loss: 142.1325 - val_loss: 156.0722
+101/101 [==============================] - 314s 3s/step - loss: 98.2150 - val_loss: 117.7989
 Epoch 10/20
-101/101 [==============================] - 65s 641ms/step - loss: 138.7086 - val_loss: 149.6589
+101/101 [==============================] - 316s 3s/step - loss: 93.6842 - val_loss: 117.7452
 Epoch 11/20
-101/101 [==============================] - 65s 642ms/step - loss: 135.7908 - val_loss: 153.1603
+101/101 [==============================] - 317s 3s/step - loss: 89.2142 - val_loss: 113.5686
 Epoch 12/20
-101/101 [==============================] - 64s 638ms/step - loss: 132.1361 - val_loss: 156.2629
+101/101 [==============================] - 312s 3s/step - loss: 85.0960 - val_loss: 115.9792
 Epoch 13/20
-101/101 [==============================] - 65s 646ms/step - loss: 130.2389 - val_loss: 152.9931
+101/101 [==============================] - 316s 3s/step - loss: 81.4326 - val_loss: 116.4758
 Epoch 14/20
-101/101 [==============================] - 65s 643ms/step - loss: 127.1018 - val_loss: 151.8713
+101/101 [==============================] - 317s 3s/step - loss: 78.2397 - val_loss: 113.8769
 Epoch 15/20
-101/101 [==============================] - 65s 640ms/step - loss: 124.8339 - val_loss: 152.1832
+101/101 [==============================] - 316s 3s/step - loss: 74.7961 - val_loss: 115.7282
 Epoch 16/20
-101/101 [==============================] - 65s 643ms/step - loss: 122.4533 - val_loss: 154.0358
+101/101 [==============================] - 317s 3s/step - loss: 71.5394 - val_loss: 117.2613
 Epoch 17/20
-101/101 [==============================] - 65s 641ms/step - loss: 120.0092 - val_loss: 153.4459
+101/101 [==============================] - 308s 3s/step - loss: 68.7499 - val_loss: 114.2497
 Epoch 18/20
-101/101 [==============================] - 65s 642ms/step - loss: 118.3904 - val_loss: 154.8240
+101/101 [==============================] - 315s 3s/step - loss: 66.1376 - val_loss: 117.3670
 Epoch 19/20
-101/101 [==============================] - 65s 646ms/step - loss: 116.4227 - val_loss: 152.9771
+101/101 [==============================] - 319s 3s/step - loss: 63.5586 - val_loss: 116.1382
 Epoch 20/20
-101/101 [==============================] - 65s 647ms/step - loss: 114.1081 - val_loss: 156.4488
+101/101 [==============================] - 311s 3s/step - loss: 61.2551 - val_loss: 119.2467
 </pre>
 </div>
 </div>
@@ -14770,7 +14777,15 @@ Epoch 20/20
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Question 2:</strong> Describe your final model architecture and your reasoning at each step.</p>
-<p><strong>Answer:</strong> The final model structure is similar to model_2 (that was shown as the best one) but with regularizations added - namely, dropout and maxpooling1D. While the model_2 had the lowest loss in training and valid, I did notice that training loss was noticeably lower than validation loss - this suggests a potential overfitting in the model. As a result, I added 20% dropout as a regularization, and because of CNN component, added MaxPooling1D to further reduce "noise" that could've led to the above result. I do think that this model has additional room for improvement as both losses went up, but this would be beneficial nevertheless as I try to prepare for any real-production level data (which could be different from training/validation datasets).</p>
+<p><strong>Answer:</strong> For new submission, I updated the model with following changes (it's still based on model_2 for the original framework):</p>
+<ul>
+<li>Use of MFCC features this time per reviewer's suggestion</li>
+<li>Added two additional recurrent layers to learn more from the data</li>
+<li>Removal of MaxPooling1D - I ran 1 epoch and saw that it was actually not adding any gain (affected performance) already in the first epoch</li>
+<li>dropout is still retained</li>
+<li>Overall, my approach was: make the architecture more sophisticated to learn and ensure I don't overly simplify the process (which I think MaxPooling1D did for spectrogram data learning).</li>
+<li>Result is the best training and validation loss even compared with model_2</li>
+</ul>
 
 </div>
 </div>
@@ -14786,7 +14801,7 @@ Epoch 20/20
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -14804,7 +14819,7 @@ Epoch 20/20
 <span class="sd">        model_path (str): Path to saved acoustic model&#39;s weights</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># load the train and test data</span>
-    <span class="n">data_gen</span> <span class="o">=</span> <span class="n">AudioGenerator</span><span class="p">()</span>
+    <span class="n">data_gen</span> <span class="o">=</span> <span class="n">AudioGenerator</span><span class="p">(</span><span class="n">spectrogram</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">data_gen</span><span class="o">.</span><span class="n">load_train_data</span><span class="p">()</span>
     <span class="n">data_gen</span><span class="o">.</span><span class="n">load_validation_data</span><span class="p">()</span>
     
@@ -14851,7 +14866,7 @@ Epoch 20/20
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_predictions</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
@@ -14881,7 +14896,7 @@ her father is a most remarkable person to say the least
 --------------------------------------------------------------------------------
 Predicted transcription:
 
-rer fatheras an mos fremerkapae purson to sethe lease t
+her father s a mostremarcab persontosaythe leae
 --------------------------------------------------------------------------------
 </pre>
 </div>
@@ -14901,7 +14916,7 @@ rer fatheras an mos fremerkapae purson to sethe lease t
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_predictions</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
@@ -14931,7 +14946,7 @@ the bogus legislature numbered thirty six members
 --------------------------------------------------------------------------------
 Predicted transcription:
 
-the blis lordes lager nomvere there suie lnemers
+the bodis letelatured noverd hirty sitxenevvers
 --------------------------------------------------------------------------------
 </pre>
 </div>
